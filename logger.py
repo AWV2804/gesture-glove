@@ -2,10 +2,13 @@
 import os
 from typing import List, Tuple, Optional
 
-def get_next_run_dir(base: str = '.') -> str:
+def get_next_run_dir(base: str = './Runs') -> str:
     """
     Find the next “Run N” folder (N=max+1, or 1 if none), create it, and return its path.
     """
+    # Ensure the base directory (Runs/) exists
+    os.makedirs(base, exist_ok=True)
+
     existing = []
     for name in os.listdir(base):
         if name.startswith("Run "):

@@ -10,7 +10,7 @@ def main():
     # Adjust path if your Run folders are somewhere else
     basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     print("Base directory (absolute):", basedir)
-    dataset = LogGestureDataset(basedir)
+    dataset = LogGestureDataset()
     print(f"Total samples: {len(dataset)}")
 
     loader = DataLoader(dataset, batch_size=2, shuffle=True)

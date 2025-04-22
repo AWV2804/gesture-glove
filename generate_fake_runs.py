@@ -2,10 +2,10 @@ import os
 import random
 
 GESTURES = ["clap", "pinch", "snap"]
-NUM_RUNS = 10
+NUM_RUNS = 50  # Set a default value for NUM_RUNS
 NUM_SENSORS = 6
-NUM_SAMPLES = 50
-DT = 0.1
+NUM_SAMPLES = 10000
+DT = 0.0001  # Smaller time step for quick motions
 
 def simulate_sample_data(t):
     ax = round(random.uniform(-1, 1), 6)
@@ -17,22 +17,30 @@ def simulate_sample_data(t):
     return (ax, ay, az), (gx, gy, gz)
 
 def create_run(run_idx):
-    run_dir = f"Run {run_idx}"
+    # Ensure the Runs/ directory exists
+    base_dir = "Runs"
+    os.makedirs(base_dir, exist_ok=True)
+
+    # Create the specific Run directory inside Runs/
+    run_dir = os.path.join(base_dir, f"Run {run_idx}")
     os.makedirs(run_dir, exist_ok=True)
+
+    # Write the gesture file
     gesture = random.choice(GESTURES)
     with open(os.path.join(run_dir, "gesture.txt"), "w") as f:
         f.write(gesture)
 
+    # Write sensor data files
     for sensor_id in range(NUM_SENSORS):
         sensor_file = os.path.join(run_dir, f"MySensor{sensor_id}.log")
         with open(sensor_file, "w") as f:
             for i in range(NUM_SAMPLES):
-                t = round(i * DT, 1)
+                t = round(i * DT, 6)  # Use higher precision for smaller DT
                 accel, gyro = simulate_sample_data(t)
-                f.write(f"{t:.1f} acceleration: {accel}\n")
-                f.write(f"{t:.1f} gyro:         {gyro}\n")
+                f.write(f"{t:.6f} acceleration: {accel}\n")
+                f.write(f"{t:.6f} gyro:         {gyro}\n")
 
 if __name__ == "__main__":
     for run_id in range(1, NUM_RUNS + 1):
         create_run(run_id)
-    print(f"Generated {NUM_RUNS} synthetic runs.")
+    print(f"Generated {NUM_RUNS} synthetic runs in the 'Runs/' directory.")

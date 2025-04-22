@@ -1,12 +1,6 @@
-# Ignore Python virtual environments
 venv/
-
-# Python bytecode
 __pycache__/
 *.py[cod]
-
-# VS Code settings
 .vscode/
-
-# Sample Runs
 Run */
+*.pth

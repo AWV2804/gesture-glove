@@ -7,7 +7,11 @@ from log_info import log_info
 GESTURE_LABELS = {'clap': 0, 'pinch': 1, 'snap': 2}
 
 class LogGestureDataset(Dataset):
-    def __init__(self, base_dir):
+    def __init__(self, base_dir="Runs"):
+        """
+        Initialize the dataset by loading all runs from the specified base directory.
+        Defaults to the 'Runs/' folder.
+        """
         self.samples = []
         self.base_dir = base_dir
         self._load_all_runs()
@@ -29,7 +33,6 @@ class LogGestureDataset(Dataset):
 
             log_info(f"Checking folder: {run_path}")
             log_info(f"Found label: {gesture}")
-            #log_info(f"Sensor files found: {len(sensor_data)}")
 
             sensor_data = []
             for i in range(6):
@@ -40,7 +43,6 @@ class LogGestureDataset(Dataset):
             if len(sensor_data) == 6:
                 X = np.concatenate(sensor_data, axis=0)  # shape: [6*6, T]
                 self.samples.append((torch.tensor(X, dtype=torch.float32), y))
-                
 
     def _parse_log_file(self, filepath):
         accel, gyro = [], []
