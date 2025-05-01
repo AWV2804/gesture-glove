@@ -82,7 +82,7 @@ class MPU6050(object):
 
         sleep_ms(200)  # Ensure PSU and device have settled
         if isinstance(side_str, str):  # Non-pyb targets may use other than X or Y
-            self._mpu_i2c = I2C(side_str)
+            self._mpu_i2c = I2C(0)
         elif hasattr(side_str, "readfrom"):  # Soft or hard I2C instance. See issue #3097
             self._mpu_i2c = side_str
         else:
