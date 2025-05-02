@@ -49,8 +49,8 @@ class LogGestureDataset(Dataset):
         with open(filepath, "r") as f:
             lines = f.readlines()
             for i in range(0, len(lines), 2):
-                acc_line = lines[i].split("acceleration:")[1].strip()
-                gyr_line = lines[i+1].split("gyro:")[1].strip()
+                acc_line = lines[i].split("acceleration:")[-1].strip()
+                gyr_line = lines[i+1].split("gyro:")[-1].strip()
                 ax, ay, az = eval(acc_line)
                 gx, gy, gz = eval(gyr_line)
                 accel.append([ax, ay, az])
