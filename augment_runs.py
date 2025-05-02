@@ -2,7 +2,7 @@ import os
 import random
 import shutil
 
-AUGMENTATIONS_PER_RUN = 200
+AUGMENTATIONS_PER_RUN = 20
 INPUT_RUNS = list(range(30))  # Original runs Run 0 to Run 29
 BASE_DIR = "Runs"
 SENSOR_COUNT = 6

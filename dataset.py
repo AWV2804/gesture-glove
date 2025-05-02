@@ -5,23 +5,31 @@ import numpy as np
 from log_info import log_info
 
 GESTURE_LABELS = {'clap': 0, 'jazz': 1, 'pinch': 2}
-TARGET_LEN = 5  # Set a consistent time dimension for all samples
+TARGET_LEN = 5  # Ensure all samples have consistent time dimension
+ORIGINAL_RUNS = {f"Run {i}" for i in range(30)}  # Real runs: Run 0 to Run 29
 
 class LogGestureDataset(Dataset):
-    def __init__(self, base_dir="Runs"):
+    def __init__(self, base_dir="Runs", mode="real"):
         self.samples = []
         self.base_dir = base_dir
+        self.mode = mode
         self._load_all_runs()
 
     def _load_all_runs(self):
         log_info(f"Loading data from: {self.base_dir}")
         for run_name in sorted(os.listdir(self.base_dir)):
+            if self.mode == "real" and run_name not in ORIGINAL_RUNS:
+                continue
+            if self.mode == "augmented" and run_name in ORIGINAL_RUNS:
+                continue
+
             run_path = os.path.join(self.base_dir, run_name)
-            if not os.path.isdir(run_path) or not run_name.startswith("Run "):
+            if not os.path.isdir(run_path):
                 continue
             label_path = os.path.join(run_path, "gesture.txt")
             if not os.path.exists(label_path):
                 continue
+
             with open(label_path, "r") as f:
                 gesture = f.read().strip().lower()
             if gesture not in GESTURE_LABELS:
@@ -39,7 +47,7 @@ class LogGestureDataset(Dataset):
                 sensor_data.append(self._parse_log_file(log_path))
             if len(sensor_data) == 6:
                 sensor_data = [self._pad_or_truncate(arr, TARGET_LEN) for arr in sensor_data]
-                X = np.concatenate(sensor_data, axis=0)  # shape: [36, T]
+                X = np.concatenate(sensor_data, axis=0)  # shape: [36, TARGET_LEN]
                 self.samples.append((torch.tensor(X, dtype=torch.float32), y))
 
     def _pad_or_truncate(self, arr, length):

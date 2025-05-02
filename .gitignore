@@ -3,5 +3,5 @@ __pycache__/
 *.py[cod]
 .vscode/
 Runs/
-*.pth
+
 .DS_Store

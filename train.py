@@ -5,9 +5,9 @@ from dataset import LogGestureDataset
 from model import GestureCNN
 
 # Configuration
-BATCH_SIZE = 16
-EPOCHS = 50
-LEARNING_RATE = 0.0005
+BATCH_SIZE = 2
+EPOCHS = 20
+LEARNING_RATE = 0.001
 BASE_DIR = "."  # Root folder where Run X folders live
 if torch.cuda.is_available():
     DEVICE = torch.device("cuda")
@@ -19,8 +19,12 @@ else:
 print(f"Using device: {DEVICE}")
 
 # Load dataset
-dataset = LogGestureDataset()
-loader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
+train_dataset = LogGestureDataset(mode="real")
+test_dataset = LogGestureDataset(mode="augmented")
+
+train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE)
+
 
 # Initialize model
 model = GestureCNN(pooled_steps=25)
@@ -37,7 +41,7 @@ for epoch in range(EPOCHS):
     correct = 0
     total = 0
 
-    for X, y in loader:
+    for X, y in train_loader:
         X, y = X.to(DEVICE), y.to(DEVICE)
 
         optimizer.zero_grad()
@@ -56,3 +60,27 @@ for epoch in range(EPOCHS):
 # Save model
 torch.save(model.state_dict(), "gesture_model.pth")
 print("Model saved as gesture_model.pth")
+
+# # Map index to gesture name
+# LABELS = {0: "clap", 1: "jazz", 2: "pinch"}
+
+# # Evaluate on augmented (test) dataset
+# model.eval()
+# correct = 0
+# total = 0
+
+# with torch.no_grad():
+#     for X, y in test_loader:
+#         X, y = X.to(DEVICE), y.to(DEVICE)
+#         outputs = model(X)
+#         _, predicted = torch.max(outputs, 1)
+#         total += y.size(0)
+#         correct += (predicted == y).sum().item()
+
+#         for true, pred in zip(y.cpu(), predicted.cpu()):
+#             truth_label = LABELS[int(true.item())]
+#             predicted_label = LABELS[int(pred.item())]
+#             result = "✅" if truth_label == predicted_label else "❌"
+#             print(f"True: {truth_label}, Pred: {predicted_label} {result}")
+
+# print(f"\nTest Accuracy on Augmented Runs: {100 * correct / total:.2f}%")
