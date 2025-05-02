@@ -5,9 +5,9 @@ from dataset import LogGestureDataset
 from model import GestureCNN
 
 # Configuration
-BATCH_SIZE = 1
-EPOCHS = 30
-LEARNING_RATE = 0.001
+BATCH_SIZE = 16
+EPOCHS = 50
+LEARNING_RATE = 0.0005
 BASE_DIR = "."  # Root folder where Run X folders live
 if torch.cuda.is_available():
     DEVICE = torch.device("cuda")

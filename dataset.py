@@ -4,14 +4,11 @@ from torch.utils.data import Dataset
 import numpy as np
 from log_info import log_info
 
-GESTURE_LABELS = {'clap': 0, 'pinch': 1, 'snap': 2}
+GESTURE_LABELS = {'clap': 0, 'jazz': 1, 'pinch': 2}
+TARGET_LEN = 5  # Set a consistent time dimension for all samples
 
 class LogGestureDataset(Dataset):
     def __init__(self, base_dir="Runs"):
-        """
-        Initialize the dataset by loading all runs from the specified base directory.
-        Defaults to the 'Runs/' folder.
-        """
         self.samples = []
         self.base_dir = base_dir
         self._load_all_runs()
@@ -41,8 +38,17 @@ class LogGestureDataset(Dataset):
                     continue
                 sensor_data.append(self._parse_log_file(log_path))
             if len(sensor_data) == 6:
-                X = np.concatenate(sensor_data, axis=0)  # shape: [6*6, T]
+                sensor_data = [self._pad_or_truncate(arr, TARGET_LEN) for arr in sensor_data]
+                X = np.concatenate(sensor_data, axis=0)  # shape: [36, T]
                 self.samples.append((torch.tensor(X, dtype=torch.float32), y))
+
+    def _pad_or_truncate(self, arr, length):
+        if arr.shape[1] >= length:
+            return arr[:, :length]
+        else:
+            pad_width = length - arr.shape[1]
+            pad = np.zeros((arr.shape[0], pad_width), dtype=np.float32)
+            return np.concatenate([arr, pad], axis=1)
 
     def _parse_log_file(self, filepath):
         accel, gyro = [], []
