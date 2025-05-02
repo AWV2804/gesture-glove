@@ -6,7 +6,7 @@ from log_info import log_info
 
 GESTURE_LABELS = {'clap': 0, 'jazz': 1, 'pinch': 2}
 TARGET_LEN = 5  # Ensure all samples have consistent time dimension
-ORIGINAL_RUNS = {f"Run {i}" for i in range(35)}  # Real runs: Run 0 to Run 29
+ORIGINAL_RUNS = {f"Run {i}" for i in range(637)}  # Real runs: Run 0 to Run 29
 
 class LogGestureDataset(Dataset):
     def __init__(self, base_dir="Runs", mode="real"):

@@ -6,13 +6,13 @@ from model import GestureCNN
 
 # Configuration
 BATCH_SIZE = 2
-EPOCHS = 20
-LEARNING_RATE = 0.001
+EPOCHS = 50
+LEARNING_RATE = 0.0005
 BASE_DIR = "."  # Root folder where Run X folders live
 if torch.cuda.is_available():
     DEVICE = torch.device("cuda")
-elif torch.backends.mps.is_available():
-    DEVICE = torch.device("mps")
+# elif torch.backends.mps.is_available():
+#     DEVICE = torch.device("mps")
 else:
     DEVICE = torch.device("cpu")
 
